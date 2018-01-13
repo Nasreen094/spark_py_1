@@ -1,0 +1,37 @@
+I start this analysis by stating that in the POI dataset two rows were duplicate( from 4 rows). The duplicate rows were POI1&POI2. SO all of my results will be the same for these two POIs. Please consider that.
+After assigning the nearest POI to each request and removing the outliers we start the data analysis.
+First I try to enrich the dataset by some feature engineering on the TimeSt field. I extract the hour,day, month and year from this field to see the effect of each of them on the POIs separately. After checking the dataset by describe method we see that none of the added fields change over this dataset except hour. So we drop all of them and just keep the hour, and I will check the effect of hour on POIs. 
+The next step was to check the frequency of each POIs in the dataset. I also found the location of each of them on google maps. The results are as follows:
+
+POI3    8469   Montreal(middle of the city)
+POI2    7843   north of Calgary(nearby small town)
+POI1    7843   north of Calgary(nearby small town)
+POI4     369	nova Scotia(in an unpopulated area near some out of town road)
+
+These result seem reasonable, since the one in the Montreal(with the highest population) has the highest requests, and the less populated areas have less requests.
+The next step that I took was to check the effect of other columns on POIs. To do this I applied a random forest model on the dataset and the checked the variable importance. Since the province and city columns are string we cannot apply a model on them, and so I applied a get_dummies method on each of them. The top 20 results are as follows:
+
+Province_ON         0.243442
+Province_AB         0.16629
+Latitude            0.128663
+Longitude           0.0898628
+min(Poidistance)    0.0547114
+Province_QC         0.0529233
+City_Calgary        0.0515981
+City_Edmonton       0.0282983
+City_Toronto        0.0262587
+Province_NB         0.0156289
+City_Mississauga    0.0130839
+Province_NS         0.0130777
+Province_SK         0.0129502
+City_Saskatoon      0.00816382
+City_Ottawa         0.00714278
+Province_BC         0.00676864
+City_Montréal       0.00616465
+City_North York     0.00503412
+City_Moncton        0.00466929
+City_Brampton       0.00382912
+
+As can be seen from the above results the province of the POI has the highest effect on determining  the POI related to each request. Next would be their geographical location (Latitude, Longitude, and their distance to POI). It is seen from the above results that the city related to each POI has a lower effect compared to the effect of the province. The next thing that can be seen from the above results is that the hour that the request was made actually has a very low effect on POIs(ranked around 150 between all the variables).
+
+So the final conclusion is that the most effective factors on POIs are 1.POI’s Province 2. POI’s Location 3.POI’s City
